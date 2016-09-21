@@ -50,22 +50,22 @@ define(['underscore', 'three'], function(_, THREE){
 //        scene.fog = new THREE.FogExp2(fogColor, 0.001);
 
         // lights
-        var color = 0x888888;
-        var light = new THREE.DirectionalLight(color);
-        light.position.set(0, 10, 0);
-        scene.add(light);
-        var light = new THREE.DirectionalLight(color);
-        light.position.set(0, -10, 0);
-        scene.add(light);
+        var color = 0xdddddd;
+        //var light = new THREE.DirectionalLight(color);
+        //light.position.set(0, 10, 0);
+        //scene.add(light);
+        //var light = new THREE.DirectionalLight(color);
+        //light.position.set(0, -10, 0);
+        //scene.add(light);
         var light = new THREE.DirectionalLight(color);
         light.position.set(0, 0, 300);
         scene.add(light);
-        var light = new THREE.DirectionalLight(0xaaaaaa);
-        light.position.set(-1, -1, -1);
-        scene.add(light);
-        var light = new THREE.DirectionalLight(0xaaaaaa);
-        light.position.set(1, 1, -1);
-        scene.add(light);
+        //var light = new THREE.DirectionalLight(0x999999);
+        //light.position.set(0, 30, 300);
+        //scene.add(light);
+        //var light = new THREE.DirectionalLight(0xaaaaaa);
+        //light.position.set(1, 1, -1);
+        //scene.add(light);
         var light = new THREE.AmbientLight(0x222222);
         scene.add(light);
         

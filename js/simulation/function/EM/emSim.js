@@ -10,7 +10,7 @@ define(['three', 'underscore', 'backbone', 'threeModel', 'appState', 'Sim', 'emS
 
         defaults: _.extend({},Sim.prototype.defaults,
             {
-                gravity: 9.8,//m/s^2
+                gravity: 0,//m/s^2
                 gravityVector: new THREE.Vector3(0,0,-1),
 
                 visibleWire: -1,//-2 show all, -1 show conductors, or wire id, -3 show actuators, -4 show problem actuators
