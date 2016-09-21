@@ -6,7 +6,7 @@
 define(['underscore', 'three'], function(_, THREE){
 
     //var camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2, 60, 0.01, 1000, - 500, 1000 );
-    var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.01, 1000);
+    var camera = new THREE.OrthographicCamera(window.innerWidth/-2, window.innerWidth/2, window.innerHeight/2, window.innerHeight/-2, 0.1, 1000);
     //camera.setLens(50);
     var scene = new THREE.Scene();
     var simScene = new THREE.Scene();
@@ -32,7 +32,7 @@ define(['underscore', 'three'], function(_, THREE){
 
     var shouldRender = false;
 
-    var initialCameraPosition = new THREE.Vector3(-15, -12, 12);
+    var initialCameraPosition = new THREE.Vector3(0, 0, 12);
 
     var threeView = null;
 
@@ -86,6 +86,8 @@ define(['underscore', 'three'], function(_, THREE){
         camera.position.x = initialCameraPosition.x;
         camera.position.y = initialCameraPosition.y;
         camera.position.z = initialCameraPosition.z;
+        camera.zoom = 15;
+        camera.updateProjectionMatrix();
         if (threeView) threeView.reset3DNavigation();
         render();
     }

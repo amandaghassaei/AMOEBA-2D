@@ -26,7 +26,7 @@ define(['underscore', 'backbone', 'threeModel', 'three', 'plist', 'materialsPlis
             basePlaneIsVisible:true,
             highlighterIsVisible:true,
             axesAreVisible: false,
-            focusOnLattice: true,
+            focusOnLattice: false,
             showOneLayer: false,
 
             //key bindings

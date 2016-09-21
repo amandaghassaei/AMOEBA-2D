@@ -34,6 +34,7 @@ define(['underscore', 'backbone', 'three', 'appState', 'globals', 'lattice', 'or
 
             this.controls = new THREE.OrbitControls(this.model.camera, this.$el.get(0));
             this.controls.addEventListener('change', this.model.render);
+            this.controls.enableRotate = false;
 
             this.$el.append(this.model.domElement);//render only once
 
@@ -54,7 +55,7 @@ define(['underscore', 'backbone', 'three', 'appState', 'globals', 'lattice', 'or
 
         _setControlsEnabled: function(){
             var state = !(appState.get("shift") || appState.get("extrudeMode"));
-            this.controls.enableRotate = state;
+            //this.controls.enableRotate = state;
             this.controls.enablePan = state;
             this.controls.enableZoom = state;
         },
@@ -74,7 +75,7 @@ define(['underscore', 'backbone', 'three', 'appState', 'globals', 'lattice', 'or
         _mouseOut: function(){
             if (globals.get("highlighter")) globals.get("highlighter").setNothingHighlighted();
             this._setNoPartIntersections();
-            this.controls.enableRotate = true;
+            //this.controls.enableRotate = true;
             this.controls.enablePan = true;
             this.controls.enableZoom = true;
         },
@@ -107,7 +108,7 @@ define(['underscore', 'backbone', 'three', 'appState', 'globals', 'lattice', 'or
             } else if (this.leftClick && !this.rightClick) {
                 highlighter.addRemoveVoxel(!appState.get("deleteMode"));
                 if (highlighter.highlightingArrow()) {
-                    this.controls.enableRotate = true;
+                    //this.controls.enableRotate = true;
                     this.controls.enablePan = true;
                     this.controls.enableZoom = true;
                 }
@@ -144,7 +145,7 @@ define(['underscore', 'backbone', 'three', 'appState', 'globals', 'lattice', 'or
 
             globals.get("highlighter").mouseDown();
             if (globals.get("highlighter").highlightingArrow()){
-                this.controls.enableRotate = false;
+                //this.controls.enableRotate = false;
                 this.controls.enablePan = false;
                 this.controls.enableZoom = false;
             }
