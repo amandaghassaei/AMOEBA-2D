@@ -163,8 +163,8 @@ define([], function(){
                     properties:{
                         conductive: true,
                         conductiveAxes: [
-                            {x:0, y:0, z:1},
-                            {x:0, y:0, z:-1}
+                            {x:0, y:1, z:0},
+                            {x:0, y:-1, z:0}
                         ],
                         density: 3500,//kg/m^3
                         longitudalK:{x:80,y:80,z:80},
@@ -182,7 +182,7 @@ define([], function(){
                         conductive: true,
                         conductiveAxes: [
                             {x:1, y:0, z:0},
-                            {x:0, y:0, z:-1}
+                            {x:0, y:1, z:0}
                         ],
                         density: 3500,//kg/m^3
                         longitudalK:{x:80,y:80,z:80},
@@ -201,7 +201,7 @@ define([], function(){
                         conductiveAxes: [
                             {x:1, y:0, z:0},
                             {x:-1, y:0, z:0},
-                            {x:0, y:0, z:-1}
+                            {x:0, y:1, z:0}
                         ],
                         density: 3500,//kg/m^3
                         longitudalK:{x:80,y:80,z:80},

@@ -133,6 +133,7 @@ define(['underscore', 'appState', 'three'], function(_, appState, THREE){
         new THREE.Face3(5, 3, 7)
     ];
     customMeshTypes["wireStraight"] = wireStraight;
+    wireStraight.rotateX(Math.PI/2);
 
     var wireBent = new THREE.Geometry();
     wireBent.vertices = [
@@ -166,6 +167,7 @@ define(['underscore', 'appState', 'three'], function(_, appState, THREE){
         new THREE.Face3(0, 4, 8)
     ];
     customMeshTypes["wireBent"] = wireBent;
+    wireBent.rotateX(Math.PI/2);
 
     var wireJunction1 = new THREE.Geometry();
     wireJunction1.vertices = [
@@ -206,6 +208,7 @@ define(['underscore', 'appState', 'three'], function(_, appState, THREE){
         new THREE.Face3(5, 11, 4)
     ];
     customMeshTypes["wireJunction1"] = wireJunction1;
+    wireJunction1.rotateX(Math.PI/2);
 
     var wireJunction2 = new THREE.Geometry();
     wireJunction2.vertices = [
