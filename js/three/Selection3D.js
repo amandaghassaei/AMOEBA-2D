@@ -37,7 +37,7 @@ define(['backbone', 'underscore', 'lattice', 'three', 'threeModel', 'globals', '
             this.object3D.add(this._buildWireframe(mesh));
             var arrows = [];
             var highlightTargets = [];
-            for (var i=0;i<6;i++){
+            for (var i=0;i<4;i++){
                 var direction = new THREE.Vector3(0,0,0);
                 var sign = (i%2 == 0 ? 1 : -1);
                 direction[this.arrowAxisForIndex(i)] = sign;
@@ -189,7 +189,7 @@ define(['backbone', 'underscore', 'lattice', 'three', 'threeModel', 'globals', '
 
             this.object3D.children[1].update(this.mesh);//update box helper
 
-            for (var i=0;i<6;i++){
+            for (var i=0;i<4;i++){
                 var axis = this.arrowAxisForIndex(i);
                 var position = center.clone();
                 if (i%2 == 0) {
