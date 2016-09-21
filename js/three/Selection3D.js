@@ -218,13 +218,13 @@ define(['backbone', 'underscore', 'lattice', 'three', 'threeModel', 'globals', '
 
         clone: function(params){
             lattice.addCellsInRange({min: this.get("min").clone(), max: this.get("max").clone()}, globals.get("selectedRegion"), params);
-            appState.set("showOneLayer", false);
+            appState.set("showOneLayer", true);
             globals.destroySelection3D();
         },
         
         fill: function(){
             lattice.addCellsInRange({min: this.get("min").clone(), max: this.get("max").clone()});
-            appState.set("showOneLayer", false);
+            appState.set("showOneLayer", true);
             globals.destroySelection3D();
         },
 
