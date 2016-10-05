@@ -16,7 +16,7 @@
     <% var index = 0;  _.each(wires, function(wire, id){ %>
         <label class="radio <% if(wire.signals.length > 1){ %>red<% } %>">
             <input type="radio" <% if (id == visibleWire){ %>checked<% } %> name="visibleWire" value="<%= id %>" data-toggle="radio" class="custom-radio emSim"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-            Circuit <%= ++index %> ( <%= wire.cells.length %> cell<% if (wire.cells.length > 1){ %>s<% } %> )
+            Wire <%= ++index %> ( <%= wire.cells.length %> cell<% if (wire.cells.length > 1){ %>s<% } %> )
             <% if(wire.signals.length == 1){ %><img class="waveformIcon" src="assets/imgs/waveforms/<%= wire.signals[0].waveformType %>.png">&nbsp;&nbsp;<%= wire.signals[0].frequency %> Hz&nbsp;&nbsp;<a data-id="<%= id %>" class="editSignal">Edit Signal...</a><% } %>
         </label>
     <% }); %>
