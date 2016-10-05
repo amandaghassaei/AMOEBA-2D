@@ -674,9 +674,9 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                 ////gpuMath.swapTextures("u_quaternion", "u_lastQuaternion");
                 //return;
 
-                var gravity = runConstants.gravity;
-                var groundHeight = runConstants.groundHeight;
-                var friction = runConstants.friction;
+                //var gravity = runConstants.gravity;
+                //var groundHeight = runConstants.groundHeight;
+                //var friction = runConstants.friction;
                 var dt = runConstants.dt;
 
                 var latticePitch = lattice.getPitch();
@@ -691,7 +691,8 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                     if (this.mass[rgbaIndex+1] == 1) continue;//fixed
                     var mass = this.mass[rgbaIndex];
                     if (mass == 0) continue;
-                    var force = [mass*gravity.x, mass*gravity.y, mass*gravity.z];//translational force
+                    //var force = [mass*gravity.x, mass*gravity.y, mass*gravity.z];//translational force
+                    var force = [0,0,0];//translational force
                     var I = this.mass[rgbaIndex+2];//moment of inerita
                     var rForce = [0,0,0];//rotational force
 
@@ -729,27 +730,27 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         var neighborAxis = Math.floor(j / 2);
                         var neighborSign = Math.floor(j%3);
 
-                        //var actuation = 0;
-                        //var _actuatorType = -1;
-                        //if (actuatorType<0 && wiring[3] == neighborAxis) {
-                        //    _actuatorType = actuatorType;
-                        //    actuation += 0.3*(this._getActuatorVoltage(wiring[1], time) - this._getActuatorVoltage(wiring[2], time));
-                        //} else {
-                        //    var neighborWiring = [this.wires[neighborIndex], this.wires[neighborIndex+1], this.wires[neighborIndex+2], this.wires[neighborIndex+3]];
-                        //    var neighborActuatorType = neighborWiring[0];//properly wired actuator has type < 0
-                        //    _actuatorType = neighborActuatorType;
-                        //    if (neighborActuatorType<0 && neighborWiring[3] == neighborAxis){
-                        //        actuation += 0.3*(this._getActuatorVoltage(neighborWiring[1], time) - this._getActuatorVoltage(neighborWiring[2], time));
-                        //    }
-                        //}
-                        //var actuatedD = [nominalD[0], nominalD[1], nominalD[2]];
-                        //if (_actuatorType == -1) actuatedD[neighborAxis] *= 1+actuation;//linear actuator
-                        //else if (_actuatorType == -4) actuatedD[0] += actuatedD[neighborAxis]*actuation;//shear x
-                        //else if (_actuatorType == -5) actuatedD[1] += actuatedD[neighborAxis]*actuation;//shear y
-                        //else if (_actuatorType == -6) actuatedD[2] += actuatedD[neighborAxis]*actuation;//shear z
+                        var actuation = 0;
+                        var _actuatorType = -1;
+                        if (actuatorType<0 && wiring[3] == neighborAxis) {
+                            _actuatorType = actuatorType;
+                            actuation += 0.3*(this._getActuatorVoltage(wiring[1], time) - this._getActuatorVoltage(wiring[2], time));
+                        } else {
+                            var neighborWiring = [this.wires[neighborIndex], this.wires[neighborIndex+1], this.wires[neighborIndex+2], this.wires[neighborIndex+3]];
+                            var neighborActuatorType = neighborWiring[0];//properly wired actuator has type < 0
+                            _actuatorType = neighborActuatorType;
+                            if (neighborActuatorType<0 && neighborWiring[3] == neighborAxis){
+                                actuation += 0.3*(this._getActuatorVoltage(neighborWiring[1], time) - this._getActuatorVoltage(neighborWiring[2], time));
+                            }
+                        }
+                        var actuatedD = [nominalD[0], nominalD[1], nominalD[2]];
+                        if (_actuatorType == -1) actuatedD[neighborAxis] *= 1+actuation;//linear actuator
+                        else if (_actuatorType == -4) actuatedD[0] += actuatedD[neighborAxis]*actuation;//shear x
+                        else if (_actuatorType == -5) actuatedD[1] += actuatedD[neighborAxis]*actuation;//shear y
+                        else if (_actuatorType == -6) actuatedD[2] += actuatedD[neighborAxis]*actuation;//shear z
 
                         //convert translational offsets to correct reference frame
-                        var halfNominalD = this._multiplyVectorScalar(nominalD, 0.5);//todo actuatedD
+                        var halfNominalD = this._multiplyVectorScalar(actuatedD, 0.5);//todo actuatedD
                         var cellHalfNominalD = this._applyQuaternion(halfNominalD, quaternion);//halfNominalD in cell's reference frame
                         var neighborHalfNominalD = this._applyQuaternion(halfNominalD, neighborQuaternion);//halfNominalD in neighbor's reference frame
 
