@@ -776,7 +776,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         //bending and torsion
                         var rotationDelta = neighborRotation-rotation;
                         var angVelocityDelta = neighborAngVelocity - angVelocity;
-                        rForce += 0.00001*(rotationalK[2]*rotationDelta + rotationalD[2]*angVelocityDelta);
+                        rForce += 0.00001*(rotationalK[2]*rotationDelta + 0.01*rotationalD[2]*angVelocityDelta);
                     }
 
                     ////simple collision detection
