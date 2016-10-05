@@ -186,7 +186,6 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                                 }
                             }
                         });
-
                         if (wireIndices.length == 2){
 
                             //actuator type - 0 indicates nothing, -1=longitudal, -2=bending, -3=torsional, 4, 5=shear
@@ -772,11 +771,13 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         var torque = this._crossVectors(cellHalfNominalD, _force);//cellHalfNominalD = lever arm
                         rForce += torque[2];
 
-                        //todo this is causing instability
                         //bending and torsion
                         var rotationDelta = neighborRotation-rotation;
+                        var actuatedRotationalDelta = rotationDelta;
+                        if (_actuatorType == -2) actuatedRotationalDelta -= actuation*this._neighborSign(j);//bending
+
                         var angVelocityDelta = neighborAngVelocity - angVelocity;
-                        rForce += 0.00001*(rotationalK[2]*rotationDelta + 0.01*rotationalD[2]*angVelocityDelta);
+                        rForce += 0.00001*(rotationalK[2]*actuatedRotationalDelta + 0.01*rotationalD[2]*angVelocityDelta);
                     }
 
                     ////simple collision detection

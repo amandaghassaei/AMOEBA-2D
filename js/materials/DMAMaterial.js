@@ -567,7 +567,7 @@ define(['underscore', 'appState', 'three'], function(_, appState, THREE){
 
     DMAMaterial.prototype.isSilicon = function(){
         return this.properties.silicon;
-    }
+    };
 
     DMAMaterial.prototype.getDensity = function(){
         return this.properties.density;
