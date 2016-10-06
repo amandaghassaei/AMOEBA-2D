@@ -18,11 +18,20 @@ void main(){
         return;
     }
 
-    vec3 lastTranslation = texture2D(u_lastTranslation, scaledFragCoord).xyz;
-    vec3 lastLastTranslation = texture2D(u_lastLastTranslation, scaledFragCoord).xyz;
-    vec3 acceleration = texture2D(u_acceleration, scaledFragCoord).xyz;
+    vec4 _lastPosition = texture2D(u_lastTranslation, scaledFragCoord);
+    vec4 _lastLastPosition = texture2D(u_lastLastTranslation, scaledFragCoord);
+    vec4 _acceleration = texture2D(u_acceleration, scaledFragCoord);
+
+    vec3 lastTranslation = _lastPosition.xyz;
+    vec3 lastLastTranslation = _lastLastPosition.xyz;
+    vec3 acceleration = _acceleration.xyz;
+
+    float lastRotation = _lastPosition[3];
+    float lastLastRotation = _lastLastPosition[3];
+    float lastAngAcceleration = _acceleration[3];
 
     vec3 translation = 2.0*lastTranslation - lastLastTranslation + acceleration*u_dt*u_dt;
+    float rotation = 2.0*lastRotation - lastLastRotation + lastAngAcceleration*u_dt*u_dt;
 
-    gl_FragColor = vec4(translation, 0);
+    gl_FragColor = vec4(translation, rotation);
 }

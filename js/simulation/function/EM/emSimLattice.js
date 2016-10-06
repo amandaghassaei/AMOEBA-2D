@@ -589,6 +589,12 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                             position[1] += multiplier * translation[1];
                             position[2] += multiplier * translation[2];
                             cells[index[0]][index[1]][index[2]].object3D.position.set(position[0], position[1], position[2]);
+
+                            var rotationAngle = parsedPixels[parsePixelsIndex + 3];
+                            var quaternion = this._multiplyQuaternions([0,0,Math.sin(rotationAngle/2),Math.cos(rotationAngle/2)],
+                                [this.originalQuaternion[rgbaIndex], this.originalQuaternion[rgbaIndex+1], this.originalQuaternion[rgbaIndex+2], this.originalQuaternion[rgbaIndex+3]]);
+                            var rotation = this._eulerFromQuaternion(quaternion);
+                            cells[index[0]][index[1]][index[2]].object3D.rotation.set(rotation[0], rotation[1], rotation[2]);
                         }
                     }
 
@@ -597,8 +603,6 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
 
                 gpuMath.swapTextures("u_velocity", "u_lastVelocity");
                 gpuMath.swap3Textures("u_translation", "u_lastTranslation", "u_lastLastTranslation");
-                //gpuMath.swapTextures("u_angVelocity", "u_lastAngVelocity");
-                //gpuMath.swapTextures("u_quaternion", "u_lastQuaternion");
                 return;
 
                 //var gravity = runConstants.gravity;
