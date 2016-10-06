@@ -292,7 +292,8 @@ void main(){
             vec3 rotationalK = texture2D(u_compositeKs, kIndex).xyz;
             vec3 rotationalD = texture2D(u_compositeDs, kIndex).xyz;
 
-            vec4 averageQuaternion = averageQuaternions(quaternion, neighborQuaternion);
+            float averageRotation = (neighborRotation+rotation)/2.0;
+            vec4 averageQuaternion = vec4(0.0, 0.0, sin(averageRotation/2.0), cos(averageRotation/2.0));
             vec4 averageQuaternionInverse = invertQuaternion(averageQuaternion);
             vec3 rotatedActuatedNominalD = applyQuaternion(actuatedD, averageQuaternion);
 
@@ -313,7 +314,7 @@ void main(){
             //bending and torsion
             float rotationDelta = neighborRotation-rotation;
             float actuatedRotationalDelta = rotationDelta;
-            if (_actuatorType == -2) actuatedRotationalDelta -= actuation*neighborSign(i*3.0+float(j));//bending
+            if (_actuatorType == -2) actuatedRotationalDelta -= 2.0*actuation*neighborSign(i*3.0+float(j));//bending
 
             float angVelocityDelta = neighborAngVelocity - angVelocity;
             rForce += 0.00001*(rotationalK[2]*actuatedRotationalDelta + 0.01*rotationalD[2]*angVelocityDelta);
