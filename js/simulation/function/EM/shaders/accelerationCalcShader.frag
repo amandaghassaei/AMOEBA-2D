@@ -196,7 +196,7 @@ void main(){
     }
 
     float mass = massData.x;
-    vec3 force = u_gravity*mass;
+    vec3 force = vec3(0.0,0.0,0.0);
 
     vec3 translation = texture2D(u_lastTranslation, scaledFragCoord).xyz;
     vec3 velocity = texture2D(u_lastVelocity, scaledFragCoord).xyz;
