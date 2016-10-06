@@ -664,7 +664,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                 ////gpuMath.swapTextures("u_quaternion", "u_lastQuaternion");
                 //return;
 
-                var gravity = runConstants.gravity;
+                //var gravity = runConstants.gravity;
                 //var groundHeight = runConstants.groundHeight;
                 //var friction = runConstants.friction;
                 var dt = runConstants.dt;
@@ -684,7 +684,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                     var mass = this.mass[rgbaIndex];
                     if (mass == 0) continue;
                     //var force = [mass*gravity.x, mass*gravity.y, mass*gravity.z];//translational force
-                    var force = [mass*gravity.x,0,0];//translational force
+                    var force = [0,0,0];//translational force
                     var I = this.mass[rgbaIndex+2];//moment of inerita
                     var rForce = 0;//rotational force
 
@@ -743,17 +743,17 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         else if (_actuatorType == -6) actuatedD[2] += actuatedD[neighborAxis]*actuation;//shear z
 
                         //convert translational offsets to correct reference frame
-                        var halfNominalD = this._multiplyVectorScalar(actuatedD, 0.5);//todo actuatedD
+                        var halfNominalD = this._multiplyVectorScalar(actuatedD, 0.5);
                         var cellHalfNominalD = this._applyQuaternion(halfNominalD, quaternion);//halfNominalD in cell's reference frame
                         var neighborHalfNominalD = this._applyQuaternion(halfNominalD, neighborQuaternion);//halfNominalD in neighbor's reference frame
 
                         var averageQuaternion = this._averageQuaternions(quaternion, neighborQuaternion);
                         var averageQuaternionInverse = this._invertQuaternion(averageQuaternion);
-                        //var rotatedNominalD = this._applyQuaternion(nominalD, averageQuaternion);
+                        var rotatedActuatedNominalD = this._applyQuaternion(actuatedD, averageQuaternion);
                         var translationalDelta = [
-                            neighborTranslation[0] - translation[0] + nominalD[0] - cellHalfNominalD[0] - neighborHalfNominalD[0],//rotatedNominalD[0],
-                            neighborTranslation[1] - translation[1] + nominalD[1] - cellHalfNominalD[1] - neighborHalfNominalD[1],//rotatedNominalD[1],
-                            neighborTranslation[2] - translation[2] + nominalD[2] - cellHalfNominalD[2] - neighborHalfNominalD[2]//rotatedNominalD[2]
+                            neighborTranslation[0] - translation[0] + nominalD[0] - rotatedActuatedNominalD[0],
+                            neighborTranslation[1] - translation[1] + nominalD[1] - rotatedActuatedNominalD[1],
+                            neighborTranslation[2] - translation[2] + nominalD[2] - rotatedActuatedNominalD[2]
                         ];
                         var translationalDeltaXYZ = this._applyQuaternion(translationalDelta, averageQuaternionInverse);
                         var velocityDelta = [neighborVelocity[0] - velocity[0], neighborVelocity[1] - velocity[1], neighborVelocity[2] - velocity[2]];

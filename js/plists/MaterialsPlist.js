@@ -107,7 +107,7 @@ define([], function(){
                             {x:0, y:0, z:-1}
                         ],
                         longitudalK:{x:80,y:80,z:80},
-                        shearK:{xy:80,xz:80,yx:80,yz:80,zx:2,zy:80},
+                        shearK:{xy:80,xz:80,yx:2,yz:80,zx:80,zy:80},
                         bendingK:{x:80,y:80,z:80},
                         torsionK:{x:80,y:80,z:80}
                     }
