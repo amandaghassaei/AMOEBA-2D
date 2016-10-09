@@ -614,7 +614,9 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                             position[2] += multiplier * translation[2];
                             cells[index[0]][index[1]][index[2]].object3D.position.set(position[0], position[1], position[2]);
                             var rotationAngle = parsedPixels[parsePixelsIndex + 3];
-                            cells[index[0]][index[1]][index[2]].object3D.rotation.set(0, 0, rotationAngle);
+                            var quaternion = this._multiplyQuaternions([0,0,Math.sin(rotationAngle/2),Math.cos(rotationAngle/2)],
+                                [this.originalQuaternion[rgbaIndex], this.originalQuaternion[rgbaIndex+1], this.originalQuaternion[rgbaIndex+2], this.originalQuaternion[rgbaIndex+3]]);
+                            var rotation = this._eulerFromQuaternion(quaternion);cells[index[0]][index[1]][index[2]].object3D.rotation.set(rotation[0], rotation[1], rotation[2]);
                         }
                     }
 
