@@ -119,6 +119,9 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
 
                 var actuators = [];
                 index = 0;
+                var cellSize = lattice.getPitch();
+                var cellVolume = cellSize.x * cellSize.y * cellSize.z;
+                var freqNats = [];
                 this._loopCellsWithNeighbors(cells, function(cell, neighbors, x, y, z){
 
                     var rgbaIndex = 4*index;
@@ -143,35 +146,47 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         var neighborAxis = Math.floor(neighborIndex / 2);
                         var neighborAxisName = self._getAxisName(neighborAxis);
                         _.each(["x", "y", "z"], function(axis, axisIndex){
+                            var compositeK;
                             if (axisIndex == neighborAxis) {//longitudal
                                 var cellK = self._getCellK(cell, "longitudal");
                                 var neighborK = self._getCellK(neighbor, "longitudal");
-                                var compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
+                                compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
                                 self.compositeKs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK;
-                                self.compositeDs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK/1000;//this is arbitrary for now
                             } else {//shear
                                 var cellK = self._getCellK(cell, "shear");
                                 var neighborK = self._getCellK(neighbor, "shear");
-                                var compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(neighborAxisName, cell)+self._getRotatedAxis(axis, cell)],
+                                compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(neighborAxisName, cell)+self._getRotatedAxis(axis, cell)],
                                 neighborK[self._getRotatedAxis(neighborAxisName, neighbor)+self._getRotatedAxis(axis, neighbor)]);
                                 self.compositeKs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK;
-                                self.compositeDs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK/1000;//this is arbitrary for now
                             }
+                            //translational damping
+                            var minMass = cell.getMaterial().getDensity()*cellVolume;
+                            var neighborMass = neighbor.getMaterial().getDensity()*cellVolume;
+                            if (neighborMass<minMass) minMass = neighborMass;
+                            var freqNat = Math.sqrt(compositeK/minMass);
+                            freqNats.push(freqNat);
+                            self.compositeDs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK/1000;//2*0.00001*freqNat;//critical damping
                         });
                         _.each(["x", "y", "z"], function(axis, axisIndex){
+                            var compositeK;
                             if (axisIndex == neighborAxis) {//torsion
-                                var cellK = self._getCellK(cell, "torsion");
-                                var neighborK = self._getCellK(neighbor, "torsion");
-                                var compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
+                                var cellK = self._getCellK(cell, "torsion").multiplyScalar(0.000001);
+                                var neighborK = self._getCellK(neighbor, "torsion").multiplyScalar(0.000001);
+                                compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
                                 self.compositeKs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK;
-                                self.compositeDs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK/1000;//this is arbitrary for now
                             } else {//bending
-                                var cellK = self._getCellK(cell, "bending");
-                                var neighborK = self._getCellK(neighbor, "bending");
-                                var compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
+                                var cellK = self._getCellK(cell, "bending").multiplyScalar(0.000001);
+                                var neighborK = self._getCellK(neighbor, "bending").multiplyScalar(0.000001);
+                                compositeK = self._calcCompositeParam(cellK[self._getRotatedAxis(axis, cell)], neighborK[self._getRotatedAxis(axis, neighbor)]);
                                 self.compositeKs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK;
-                                self.compositeDs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK/1000;//this is arbitrary for now
                             }
+                            //rotational damping
+                            var minI = cell.getMaterial().getDensity()*cellVolume*2/5*Math.pow(cellSize.x/2, 2);
+                            var neighborI = neighbor.getMaterial().getDensity()*cellVolume*2/5*Math.pow(cellSize.x/2, 2);
+                            if (neighborI<minI) minI = neighborI;
+                            var freqNat = Math.sqrt(compositeK/minI);
+                            freqNats.push(freqNat);
+                            self.compositeDs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK/100000;//2*0.00000000000001*freqNat;//critical damping
                         });
                     });
 
@@ -222,6 +237,15 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
 
                     index++;
                 });
+
+                if (freqNats.length>0){
+                    var maxNatFreq = _.max(freqNats);
+                    require(["emSim"], function(emSim){
+                        emSim.set("dtSolver", 1000000/(Math.PI*2*maxNatFreq*2));
+                    });
+                }
+
+                //emSim.set("dt", 10000000/(Math.PI*2*maxNatFreq*2));//extra factor of 2 for safety;
 
                 this.set("actuators", actuators);
 
@@ -589,12 +613,8 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                             position[1] += multiplier * translation[1];
                             position[2] += multiplier * translation[2];
                             cells[index[0]][index[1]][index[2]].object3D.position.set(position[0], position[1], position[2]);
-
                             var rotationAngle = parsedPixels[parsePixelsIndex + 3];
-                            var quaternion = this._multiplyQuaternions([0,0,Math.sin(rotationAngle/2),Math.cos(rotationAngle/2)],
-                                [this.originalQuaternion[rgbaIndex], this.originalQuaternion[rgbaIndex+1], this.originalQuaternion[rgbaIndex+2], this.originalQuaternion[rgbaIndex+3]]);
-                            var rotation = this._eulerFromQuaternion(quaternion);
-                            cells[index[0]][index[1]][index[2]].object3D.rotation.set(rotation[0], rotation[1], rotation[2]);
+                            cells[index[0]][index[1]][index[2]].object3D.rotation.set(0, 0, rotationAngle);
                         }
                     }
 
@@ -718,7 +738,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                         if (_actuatorType == -2) actuatedRotationalDelta -= actuation*this._neighborSign(j);//bending
 
                         var angVelocityDelta = neighborAngVelocity - angVelocity;
-                        rForce += 0.00001*(rotationalK[2]*actuatedRotationalDelta + 0.01*rotationalD[2]*angVelocityDelta);
+                        rForce += rotationalK[2]*actuatedRotationalDelta + rotationalD[2]*angVelocityDelta;
                     }
 
                     ////simple collision detection

@@ -317,7 +317,7 @@ void main(){
             if (_actuatorType == -2) actuatedRotationalDelta -= 2.0*actuation*neighborSign(i*3.0+float(j));//bending
 
             float angVelocityDelta = neighborAngVelocity - angVelocity;
-            rForce += 0.00001*(rotationalK[2]*actuatedRotationalDelta + 0.01*rotationalD[2]*angVelocityDelta);
+            rForce += rotationalK[2]*actuatedRotationalDelta + rotationalD[2]*angVelocityDelta;
         }
     }
 

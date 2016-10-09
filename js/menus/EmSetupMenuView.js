@@ -12,6 +12,7 @@ define(['jquery', 'underscore', 'menuParent', 'emSimPlist', 'emSim', 'text!menus
         },
 
         _initialize: function(){
+            this.listenTo(emSim, "change", this.render);
         },
 
         getPropertyOwner: function($target){
