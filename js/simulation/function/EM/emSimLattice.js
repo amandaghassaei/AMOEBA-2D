@@ -165,7 +165,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                             if (neighborMass<minMass) minMass = neighborMass;
                             var freqNat = Math.sqrt(compositeK/minMass);
                             freqNats.push(freqNat);
-                            self.compositeDs[index*8*6 + neighborIndex*8 + axisIndex] = compositeK/1000;//2*0.00001*freqNat;//critical damping
+                            self.compositeDs[index*8*6 + neighborIndex*8 + axisIndex] = 0.9*2*Math.sqrt(compositeK*minMass);//critical damping*0.9
                         });
                         _.each(["x", "y", "z"], function(axis, axisIndex){
                             var compositeK;
@@ -186,7 +186,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                             if (neighborI<minI) minI = neighborI;
                             var freqNat = Math.sqrt(compositeK/minI);
                             freqNats.push(freqNat);
-                            self.compositeDs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = compositeK/100000;//2*0.00000000000001*freqNat;//critical damping
+                            self.compositeDs[index*8*6 + neighborIndex*8 + 4 + axisIndex] = 0.9*2*Math.sqrt(compositeK*minI);//critical damping*0.9
                         });
                     });
 
