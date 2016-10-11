@@ -332,15 +332,14 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                 gpuMath.setUniformForProgram("accelerationCalc", "u_time", 0, "1f");
 
                 gpuMath.createProgram("positionCalc", vertexShader, positionCalcShader);
-                gpuMath.setUniformForProgram("positionCalc", "u_acceleration", 0, "1i");
+                gpuMath.setUniformForProgram("positionCalc", "u_velocity", 0, "1i");
                 gpuMath.setUniformForProgram("positionCalc", "u_lastTranslation", 1, "1i");
-                gpuMath.setUniformForProgram("positionCalc", "u_lastLastTranslation", 2, "1i");
-                gpuMath.setUniformForProgram("positionCalc", "u_mass", 3, "1i");
+                gpuMath.setUniformForProgram("positionCalc", "u_mass", 2, "1i");
                 gpuMath.setUniformForProgram("positionCalc", "u_textureDim", [textureDim, textureDim], "2f");
 
                 gpuMath.createProgram("velocityCalc", vertexShader, velocityCalcShader);
-                gpuMath.setUniformForProgram("velocityCalc", "u_translation", 0, "1i");
-                gpuMath.setUniformForProgram("velocityCalc", "u_lastTranslation", 1, "1i");
+                gpuMath.setUniformForProgram("velocityCalc", "u_acceleration", 0, "1i");
+                gpuMath.setUniformForProgram("velocityCalc", "u_lastVelocity", 1, "1i");
                 gpuMath.setUniformForProgram("velocityCalc", "u_mass", 2, "1i");
                 gpuMath.setUniformForProgram("velocityCalc", "u_textureDim", [textureDim, textureDim], "2f");
 
@@ -583,9 +582,9 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                 gpuMath.step("accelerationCalc", ["u_lastVelocity", "u_lastTranslation", "u_mass", "u_neighborsXMapping",
                     "u_neighborsYMapping", "u_compositeKs", "u_compositeDs", "u_originalPosition", "u_lastQuaternion", "u_wires",
                     "u_wiresMeta"], "u_acceleration", time);
-                gpuMath.step("positionCalc", ["u_acceleration", "u_lastTranslation", "u_lastLastTranslation", "u_mass"],
+                gpuMath.step("velocityCalc", ["u_acceleration", "u_lastVelocity", "u_mass"], "u_velocity");
+                gpuMath.step("positionCalc", ["u_velocity", "u_lastTranslation", "u_mass"],
                     "u_translation");
-                gpuMath.step("velocityCalc", ["u_translation", "u_lastTranslation"], "u_velocity");
 
                 if (shouldRender) {
                     var textureSize = this.textureSize[0]*this.textureSize[1];
@@ -624,7 +623,7 @@ define(['underscore', 'backbone', 'threeModel', 'lattice', 'plist', 'emWire', 'G
                 }
 
                 gpuMath.swapTextures("u_velocity", "u_lastVelocity");
-                gpuMath.swap3Textures("u_translation", "u_lastTranslation", "u_lastLastTranslation");
+                gpuMath.swapTextures("u_translation", "u_lastTranslation");
                 return;
 
                 //var gravity = runConstants.gravity;

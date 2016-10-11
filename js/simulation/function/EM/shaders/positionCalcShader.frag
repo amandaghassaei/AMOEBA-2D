@@ -3,9 +3,8 @@ precision highp float;
 uniform vec2 u_textureDim;
 uniform float u_dt;
 
-uniform sampler2D u_acceleration;
+uniform sampler2D u_velocity;
 uniform sampler2D u_lastTranslation;
-uniform sampler2D u_lastLastTranslation;
 uniform sampler2D u_mass;
 
 void main(){
@@ -18,20 +17,17 @@ void main(){
         return;
     }
 
-    vec4 _lastPosition = texture2D(u_lastTranslation, scaledFragCoord);
-    vec4 _lastLastPosition = texture2D(u_lastLastTranslation, scaledFragCoord);
-    vec4 _acceleration = texture2D(u_acceleration, scaledFragCoord);
+    vec4 _lastTranslation = texture2D(u_lastTranslation, scaledFragCoord);
+    vec4 _velocity = texture2D(u_velocity, scaledFragCoord);
 
-    vec3 lastTranslation = _lastPosition.xyz;
-    vec3 lastLastTranslation = _lastLastPosition.xyz;
-    vec3 acceleration = _acceleration.xyz;
+    vec3 lastTranslation = _lastTranslation.xyz;
+    vec3 velocity = _velocity.xyz;
 
-    float lastRotation = _lastPosition[3];
-    float lastLastRotation = _lastLastPosition[3];
-    float lastAngAcceleration = _acceleration[3];
+    float lastRotation = _lastTranslation[3];
+    float angVelocity = _velocity[3];
 
-    vec3 translation = 2.0*lastTranslation - lastLastTranslation + acceleration*u_dt*u_dt;
-    float rotation = 2.0*lastRotation - lastLastRotation + lastAngAcceleration*u_dt*u_dt;
+    vec3 translation = velocity*u_dt + lastTranslation;
+    float rotation = angVelocity*u_dt + lastRotation;
 
     gl_FragColor = vec4(translation, rotation);
 }
